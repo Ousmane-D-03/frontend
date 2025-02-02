@@ -1,8 +1,12 @@
-
 <script>
 import axios from 'axios';
+import Gallery from './Gallery.vue';
+import { getImages, getImage, uploadImage } from './http-api'; // Importer les fonctions
 
 export default {
+  components: {
+    Gallery,
+  },
   data() {
     return {
       images: [],
@@ -15,53 +19,47 @@ export default {
   },
   methods: {
     // Récupérer la liste des images
-    getImages() {
-      axios.get('/images')
-        .then(response => {
-          this.images = response.data;
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération des images:', error);
-        });
+    async getImages() {
+      try {
+        this.images = await getImages();
+      } catch (error) {
+        console.error('Erreur lors de la récupération des images:', error);
+      }
     },
     // Télécharger l'image sélectionnée
-    getImage() {
+    async getImage() {
 
-      axios.get(`/images/${this.selectedImage}`, { responseType: 'blob' })
-        .then(response => {
-          const reader = new window.FileReader();
-          reader.readAsDataURL(response.data);
-          reader.onload = () => {
-            this.imageUrl = reader.result; // Une fois l'image chargée, la stocker dans imageUrl
-          };
-        })
-        .catch(error => {
-          console.error('Erreur lors du téléchargement de l\'image:', error);
-        });
+      try {
+        const imageBlob = await getImage(this.selectedImage);
+        const reader = new window.FileReader();
+        reader.readAsDataURL(imageBlob);
+        reader.onload = () => {
+          this.imageUrl = reader.result; // Une fois l'image chargée, la stocker dans imageUrl
+        };
+      } catch (error) {
+        console.error('Erreur lors du téléchargement de l\'image:', error);
+      }
     },
     // Télécharger une image sur le serveur
-    uploadImage() {
+    async uploadImage() {
       const fileInput = this.$refs.fileInput;
       const file = fileInput.files[0];
 
       if (!file) return;
 
-      const formData = new FormData();
-      formData.append('file', file);
-
-      axios.post('/images', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then(() => {
+      try {
+        await uploadImage(file);
         alert('Image envoyée avec succès');
         this.getImages(); // Rafraîchir la galerie après l'upload
-      })
-      .catch(error => {
+      } catch (error) {
         alert('Erreur lors de l\'envoi de l\'image');
         console.error(error);
-      });
+      }
+    },
+    // Gérer la sélection d'une image depuis la galerie
+    handleImageSelected(imageId) {
+      this.selectedImage = imageId;
+      this.getImage(); // Charger l'image sélectionnée
     },
   },
 };
@@ -91,15 +89,12 @@ export default {
     </form>
     
     <h1>Galerie</h1>
-    <!-- Affichage de toutes les images dans la galerie -->
-    <div class="gallery">
-      <img v-for="image in images" :key="image.id" :src="image.url" alt="Image" />
-    </div>
+    <!-- Utilisation du composant Gallery -->
+    <Gallery :images="images" @image-selected="handleImageSelected" />
   </div>
 </template>
 
-
-<style scoped>
+<style>
 .gallery img {
   width: 150px;
   height: 150px;

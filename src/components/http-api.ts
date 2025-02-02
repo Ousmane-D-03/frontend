@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Récupérer la liste des images
-export const fetchImages = async () => {
+export const getImages = async () => {
   try {
     const response = await axios.get('/images');
     return response.data;
@@ -13,7 +13,7 @@ export const fetchImages = async () => {
 };
 
 // Récupérer une image spécifique par son ID
-export const fetchImageById = async (imageId: string) => {
+export const getImage = async (imageId: string) => {
   try {
     const response = await axios.get(`/images/${imageId}`, { responseType: 'blob' });
     return response.data;
