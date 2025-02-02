@@ -1,33 +1,3 @@
-<template>
-  <div>
-    <h1>Galerie d'images</h1>
-    
-    <!-- Liste déroulante pour choisir l'image -->
-    <select v-model="selectedImage" @change="getImage">
-      <option v-for="image in images" :key="image.id" :value="image.id">
-        {{ image.name }}
-      </option>
-    </select>
-    
-    <!-- Affichage de l'image sélectionnée uniquement si une image est sélectionnée -->
-    <div v-if="imageUrl">
-      <img :src="imageUrl" alt="Image sélectionnée" />
-    </div>
-    
-    <h2>Déposer une image</h2>
-    <!-- Formulaire de téléchargement d'une image -->
-    <form @submit.prevent="uploadImage">
-      <input type="file" ref="fileInput" />
-      <button type="submit">Envoyer</button>
-    </form>
-    
-    <h1>Galerie</h1>
-    <!-- Affichage de toutes les images dans la galerie -->
-    <div class="gallery">
-      <img v-for="image in images" :key="image.id" :src="image.url" alt="Image" />
-    </div>
-  </div>
-</template>
 
 <script>
 import axios from 'axios';
@@ -96,6 +66,38 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div>
+    <h1>Galerie d'images</h1>
+    
+    <!-- Liste déroulante pour choisir l'image -->
+    <select v-model="selectedImage" @change="getImage">
+      <option v-for="image in images" :key="image.id" :value="image.id">
+        {{ image.name }}
+      </option>
+    </select>
+    
+    <!-- Affichage de l'image sélectionnée uniquement si une image est sélectionnée -->
+    <div v-if="imageUrl">
+      <img :src="imageUrl" alt="Image sélectionnée" />
+    </div>
+    
+    <h2>Déposer une image</h2>
+    <!-- Formulaire de téléchargement d'une image -->
+    <form @submit.prevent="uploadImage">
+      <input type="file" ref="fileInput" />
+      <button type="submit">Envoyer</button>
+    </form>
+    
+    <h1>Galerie</h1>
+    <!-- Affichage de toutes les images dans la galerie -->
+    <div class="gallery">
+      <img v-for="image in images" :key="image.id" :src="image.url" alt="Image" />
+    </div>
+  </div>
+</template>
+
 
 <style scoped>
 .gallery img {
